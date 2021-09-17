@@ -11,6 +11,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
   TextEditingController keyControlerB = TextEditingController();
   TextEditingController myStringController = TextEditingController();
   String result = "";
+  bool vi = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Text("a:",style: TextStyle(fontSize: 15)),
+                    child: Text("a:", style: TextStyle(fontSize: 15)),
                   ),
                   Expanded(
                     flex: 8,
@@ -42,7 +43,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Text("b:",style: TextStyle(fontSize: 15)),
+                    child: Text("b:", style: TextStyle(fontSize: 15)),
                   ),
                   Expanded(
                     flex: 8,
@@ -59,7 +60,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
           children: [
             Expanded(
               flex: 2,
-              child: Text("từ của bạn:",style: TextStyle(fontSize: 15)),
+              child: Text("từ của bạn:", style: TextStyle(fontSize: 15)),
             ),
             Expanded(
               flex: 8,
@@ -69,6 +70,22 @@ class AffineCipherTabState extends State<AffineCipherTab> {
             )
           ],
         ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('mã tiếng việt'),
+              Switch(
+                  value: vi,
+                  onChanged: (value) {
+                    setState(() {
+                      this.vi = value;
+                    });
+                  }),
+            ],
+          ),
+        ),
         Text(result),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,26 +93,30 @@ class AffineCipherTabState extends State<AffineCipherTab> {
             MaterialButton(
               onPressed: () {
                 setState(() {
-                  result = Global.instance
-                      .encodeAffine(myStringController.text.trim(), {
-                    'a': int.parse(keyControlerA.text.trim()),
-                    'b': int.parse(keyControlerB.text.trim())
-                  });
+                  result = Global.instance.encodeAffine(
+                      myStringController.text.trim(),
+                      {
+                        'a': int.parse(keyControlerA.text.trim()),
+                        'b': int.parse(keyControlerB.text.trim())
+                      },
+                      type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
-              child: Text("mã hóa",style: TextStyle(fontSize: 15)),
+              child: Text("mã hóa", style: TextStyle(fontSize: 15)),
             ),
             MaterialButton(
               onPressed: () {
                 setState(() {
-                  result = Global.instance
-                      .decodeAffine(myStringController.text.trim(), {
-                    'a': int.parse(keyControlerA.text.trim()),
-                    'b': int.parse(keyControlerB.text.trim())
-                  });
+                  result = Global.instance.decodeAffine(
+                      myStringController.text.trim(),
+                      {
+                        'a': int.parse(keyControlerA.text.trim()),
+                        'b': int.parse(keyControlerB.text.trim())
+                      },
+                      type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
-              child: Text("giải mã",style: TextStyle(fontSize: 15)),
+              child: Text("giải mã", style: TextStyle(fontSize: 15)),
             )
           ],
         )

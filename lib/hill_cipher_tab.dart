@@ -13,6 +13,7 @@ class HillCipherTabState extends State<HillCipherTab> {
   TextEditingController k22Controler = TextEditingController();
   TextEditingController myStringController = TextEditingController();
   String result = "";
+  bool vi = false;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +110,22 @@ class HillCipherTabState extends State<HillCipherTab> {
             )
           ],
         ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('mã tiếng việt'),
+              Switch(
+                  value: vi,
+                  onChanged: (value) {
+                    setState(() {
+                      this.vi = value;
+                    });
+                  }),
+            ],
+          ),
+        ),
         Text(result),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +143,7 @@ class HillCipherTabState extends State<HillCipherTab> {
                       int.parse(k21Controler.text.trim()),
                       int.parse(k22Controler.text.trim())
                     ]
-                  ]);
+                  ],type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
               child: Text("mã hóa",style: TextStyle(fontSize: 15)),
@@ -144,7 +161,7 @@ class HillCipherTabState extends State<HillCipherTab> {
                       int.parse(k21Controler.text.trim()),
                       int.parse(k22Controler.text.trim())
                     ]
-                  ]);
+                  ],type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
               child: Text("giải mã",style: TextStyle(fontSize: 15)),

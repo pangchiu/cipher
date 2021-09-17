@@ -12,6 +12,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
   TextEditingController keyControler = TextEditingController();
   TextEditingController myStringController = TextEditingController();
   String result = "";
+  bool vi = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,23 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
               )
             ],
           ),
-          Text(result),
+          Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('mã tiếng việt'),
+              Switch(
+                  value: vi,
+                  onChanged: (value) {
+                    setState(() {
+                      this.vi = value;
+                    });
+                  }),
+            ],
+          ),
+        ),
+        Text(result),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,7 +72,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
                   setState(() {
                     result = Global.instance.encodeAutogenesis(
                         myStringController.text.trim(),
-                        int.parse(keyControler.text.trim()));
+                        int.parse(keyControler.text.trim()),type: vi ? TypeCharset.viet : TypeCharset.normal);
                   });
                 },
                 child: Text("mã hóa",style: TextStyle(fontSize: 15)),
@@ -65,7 +82,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
                   setState(() {
                     result = Global.instance.decodeAutogenesis(
                         myStringController.text.trim(),
-                        int.parse(keyControler.text.trim()));
+                        int.parse(keyControler.text.trim()),type: vi ? TypeCharset.viet : TypeCharset.normal);
                   });
                 },
                 child: Text("giải mã",style: TextStyle(fontSize: 15)),

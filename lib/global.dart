@@ -1,55 +1,125 @@
+import 'package:cipher/utf.dart';
+
+enum TypeCharset { viet, normal }
+
 class Global {
-  static const int Z = 26;
+  static int Z = 26;
   static Global instance = Global._();
 
   Global._();
 
   // mã hóa dịch vòng
-  String encodeShift(final String myString, final int key) {
+  String encodeShift(final String myString, final int key,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
 
-    if (isInvalidList(root)) {
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < myString.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[myString[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[myString[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
+    if (isInvalidList(root) && key <= Z) {
       isInvalid = true;
     }
 
     if (!isInvalid) {
       return "không hợp lệ";
     } else {
-      var newRoot =
-          List.generate(root.length, (index) => (root[index] + key) % Z + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+      if (type == TypeCharset.normal) {
+        var newRoot =
+            List.generate(root.length, (index) => (root[index] + key) % Z + 65);
+        return String.fromCharCodes(newRoot);
+      } else {
+        var newRoot =
+            List.generate(root.length, (index) => (root[index] + key) % Z);
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // giải mã dịch vòng
-  String decodeShift(final String myString, final int key) {
+  String decodeShift(final String myString, final int key,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
-
-    if (isInvalidList(root)) {
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      print(Z);
+      for (int i = 0; i < myString.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[myString[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[myString[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
+    if (isInvalidList(root) && key <= Z) {
       isInvalid = true;
     }
 
     if (!isInvalid) {
       return "không hợp lệ";
     } else {
-      var newRoot =
-          List.generate(root.length, (index) => (root[index] - key) % Z + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+      if (type == TypeCharset.normal) {
+        var newRoot =
+            List.generate(root.length, (index) => (root[index] - key) % Z + 65);
+        return String.fromCharCodes(newRoot);
+      } else {
+        var newRoot =
+            List.generate(root.length, (index) => (root[index] - key) % Z);
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // mã hóa vingen
-  String encodeVingen(final String str, final String k) {
+  String encodeVingen(final String str, final String k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-    var key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    List<int> key = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+      key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+
+      for (int i = 0; i < k.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[k[i]] != null) {
+          key.add(Utf.instance.vietNameseCharsetByString[k[i]]!);
+        } else {
+          key.add(-1);
+        }
+      }
+    }
 
     if (isInvalidList(root) && isInvalidList(key)) {
       isInvalid = true;
@@ -61,25 +131,57 @@ class Global {
       var newRoot = List.generate(root.length, (index) {
         if (index > k.length - 1) {
           if ((key.length - 1) % index == 0) {
-            return (root[index] + key[key.length - 1]) % Z + 65;
+            return (root[index] + key[key.length - 1]) % Z +
+                (type == TypeCharset.normal ? 65 : 0);
           } else {
-            return (root[index] + key[(key.length - 1) % index - 1]) % Z + 65;
+            return (root[index] + key[(key.length - 1) % index - 1]) % Z +
+                (type == TypeCharset.normal ? 65 : 0);
           }
         } else {
-          return (root[index] + key[index]) % Z + 65;
+          return (root[index] + key[index]) % Z +
+              (type == TypeCharset.normal ? 65 : 0);
         }
       });
-      result = String.fromCharCodes(newRoot);
-      return result;
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // giải mã vingen
-  String decodeVingen(final String str, final String k) {
+  String decodeVingen(final String str, final String k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-    var key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    List<int> key = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+      key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+
+      for (int i = 0; i < k.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[k[i]] != null) {
+          key.add(Utf.instance.vietNameseCharsetByString[k[i]]!);
+        } else {
+          key.add(-1);
+        }
+      }
+    }
 
     if (isInvalidList(root) && isInvalidList(key)) {
       isInvalid = true;
@@ -91,48 +193,47 @@ class Global {
       var newRoot = List.generate(root.length, (index) {
         if (index > k.length - 1) {
           if ((key.length - 1) % index == 0) {
-            return (root[index] - key[key.length - 1]) % Z + 65;
+            return (root[index] - key[key.length - 1]) % Z +
+                (type == TypeCharset.normal ? 65 : 0);
           } else {
-            return (root[index] - key[(key.length - 1) % index - 1]) % Z + 65;
+            return (root[index] - key[(key.length - 1) % index - 1]) % Z +
+                (type == TypeCharset.normal ? 65 : 0);
           }
         } else {
-          return (root[index] - key[index]) % Z + 65;
+          return (root[index] - key[index]) % Z +
+              (type == TypeCharset.normal ? 65 : 0);
         }
       });
-      result = String.fromCharCodes(newRoot);
-      return result;
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // mã hóa affine
-  String encodeAffine(final String str, final Map<String, int> k) {
+  String encodeAffine(final String str, final Map<String, int> k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-
-    // kiểm tra k có null hay không
-    if (k["a"] != null && k["b"] != null) {
-      if (isInvalidList(root) && ucln(Z, k["a"]!) == 1) {
-        isInvalid = true;
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
       }
     }
-
-    if (!isInvalid) {
-      return "không hợp lệ";
-    } else {
-      var newRoot = List.generate(
-          root.length, (index) => (root[index] * k["a"]! + k["b"]!) % Z + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
-    }
-  }
-
-  // giải mã affine
-  String decodeAffine(final String str, final Map<String, int> k) {
-    bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-
     // kiểm tra k có null hay không
     if (k["a"] != null && k["b"] != null) {
       if (isInvalidList(root) && ucln(Z, k["a"]!) == 1) {
@@ -146,17 +247,90 @@ class Global {
       var newRoot = List.generate(
           root.length,
           (index) =>
-              ((root[index] - k["b"]!) * inverseOf(k["a"]!, Z)) % Z + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+              (root[index] * k["a"]! + k["b"]!) % Z +
+              (type == TypeCharset.normal ? 65 : 0));
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
+    }
+  }
+
+  // giải mã affine
+  String decodeAffine(final String str, final Map<String, int> k,
+      {TypeCharset type = TypeCharset.viet}) {
+    bool isInvalid = false;
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
+    // kiểm tra k có null hay không
+    if (k["a"] != null && k["b"] != null) {
+      if (isInvalidList(root) && ucln(Z, k["a"]!) == 1) {
+        isInvalid = true;
+      }
+    }
+
+    if (!isInvalid) {
+      return "không hợp lệ";
+    } else {
+      var newRoot = List.generate(
+          root.length,
+          (index) =>
+              ((root[index] - k["b"]!) * inverseOf(k["a"]!, Z)) % Z +
+              (type == TypeCharset.normal ? 65 : 0));
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // mã hóa hill
-  String encodeHill(final String str, final List<List<int>> k) {
+  String encodeHill(final String str, final List<List<int>> k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    bool haveRemove = false;
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
+
+    // thêm kí tự nếu chuỗi kí tự có độ dài lẻ
+    if (root.length % levelOfMatrix(k) != 0) {
+      root.add(0);
+      haveRemove = true;
+    }
 
     int detK = detKOfMatrix(k);
     if (ucln(detK, Z) == 1 &&
@@ -173,28 +347,59 @@ class Global {
       int n = 0;
       List<int> newRoot = [];
       while (n * 2 <= root.length - 1) {
-        newRoot
-            .add((root[n * 2] * k[0][0] + root[n * 2 + 1] * k[1][0]) % Z + 65);
-        newRoot
-            .add((root[n * 2] * k[0][1] + root[n * 2 + 1] * k[1][1]) % Z + 65);
+        newRoot.add((root[n * 2] * k[0][0] + root[n * 2 + 1] * k[1][0]) % Z +
+            (type == TypeCharset.normal ? 65 : 0));
+        newRoot.add((root[n * 2] * k[0][1] + root[n * 2 + 1] * k[1][1]) % Z +
+            (type == TypeCharset.normal ? 65 : 0));
         n++;
       }
-      result = String.fromCharCodes(newRoot);
-      return result;
+
+      if (haveRemove == true) {
+        newRoot.removeLast();
+      }
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // giải mã hill
-  String decodeHill(final String str, final List<List<int>> k) {
+  String decodeHill(final String str, final List<List<int>> k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    bool haveRemove = false;
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
+
+    // thêm kí tự nếu chuỗi kí tự có độ dài lẻ
+    if (root.length % levelOfMatrix(k) != 0) {
+      root.add(0);
+      haveRemove = true;
+    }
 
     int detK = detKOfMatrix(k);
     if (ucln(detK, Z) == 1 &&
         isInvalidList(root) &&
         levelOfMatrix(k) == 2 &&
-        root.length % levelOfMatrix(k) == 0 &&
         inverseOf(detK, Z) != 0) {
       isInvalid = true;
     }
@@ -218,23 +423,47 @@ class Global {
         newRoot.add((root[n * 2] * inverseOfK[0][0] +
                     root[n * 2 + 1] * inverseOfK[1][0]) %
                 Z +
-            65);
+            (type == TypeCharset.normal ? 65 : 0));
         newRoot.add((root[n * 2] * inverseOfK[0][1] +
                     root[n * 2 + 1] * inverseOfK[1][1]) %
                 Z +
-            65);
+            (type == TypeCharset.normal ? 65 : 0));
         n++;
       }
-      result = String.fromCharCodes(newRoot);
-      return result;
+      if (haveRemove == true) {
+        newRoot.removeLast();
+      }
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // mã hóa autogenesis
-  String encodeAutogenesis(final String myString, final int key) {
+  String encodeAutogenesis(final String myString, final int key,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < myString.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[myString[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[myString[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
 
     if (isInvalidList(root)) {
       isInvalid = true;
@@ -246,17 +475,41 @@ class Global {
       var z = [key, ...root.sublist(0, root.length)];
 
       var newRoot = List.generate(
-          root.length, (index) => (root[index] + z[index]) % Z + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+          root.length,
+          (index) =>
+              (root[index] + z[index]) % Z +
+              (type == TypeCharset.normal ? 65 : 0));
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   //giải mã autogenesis
-  String decodeAutogenesis(final String myString, final int key) {
+  String decodeAutogenesis(final String myString, final int key,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = myString.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < myString.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[myString[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[myString[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+    }
 
     if (isInvalidList(root)) {
       isInvalid = true;
@@ -271,18 +524,58 @@ class Global {
         var d = (root[index] - z[z.length - 1]) % Z;
         z.add(d);
         return d;
-      }).map((e) => e + 65).toList();
-      result = String.fromCharCodes(newRoot);
-      return result;
+      }).map((e) => e + (type == TypeCharset.normal ? 65 : 0)).toList();
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   // mã hóa permutation
-  String encodePermutation(final String str, final String k) {
+  String encodePermutation(final String str, final String k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-    var key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    List<int> key = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+      key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+
+      for (int i = 0; i < k.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[k[i]] != null) {
+          key.add(Utf.instance.vietNameseCharsetByString[k[i]]!);
+        } else {
+          key.add(-1);
+        }
+      }
+    }
+
+    //Chỉnh chiều dài của key sao cho phù hợp với root
+    if (key.length < root.length) {
+      int count = root.length - key.length;
+      int i = 0;
+      while (i < count) {
+        key.add(key[i]);
+        i++;
+      }
+    }
 
     if (isInvalidList(root) && isInvalidList(key)) {
       isInvalid = true;
@@ -296,41 +589,101 @@ class Global {
           .entries
           .map((e) => {"key": e.key, "value": e.value})
           .toList();
+
       newkey.sort((a, b) => a["value"]!.compareTo(b["value"]!));
-      var newRoot =
-          List.generate(root.length, (index) => root[newkey[index]["key"]!] + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+
+      List<int> newRoot = [];
+      for (int i = 0; i < newkey.length; i++) {
+        int j = newkey[i]["key"]!;
+        if (j <= root.length - 1) {
+          newRoot.add(root[j] + (type == TypeCharset.normal ? 65 : 0));
+        }
+      }
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
   //giải mã permutation
-  String decodePermutation(final String str, final String k) {
+  String decodePermutation(final String str, final String k,
+      {TypeCharset type = TypeCharset.viet}) {
     bool isInvalid = false;
-    String result = "";
-    var root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
-    var key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    List<int> root = [];
+    List<int> key = [];
+    if (type == TypeCharset.normal) {
+      Z = 26;
+      root = str.toUpperCase().codeUnits.map((e) => e - 65).toList();
+      key = k.toUpperCase().codeUnits.map((e) => e - 65).toList();
+    } else {
+      Z = Utf.instance.vietNameseCharsetByString.length;
+      for (int i = 0; i < str.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[str[i]] != null) {
+          root.add(Utf.instance.vietNameseCharsetByString[str[i]]!);
+        } else {
+          root.add(-1);
+        }
+      }
+
+      for (int i = 0; i < k.length; i++) {
+        if (Utf.instance.vietNameseCharsetByString[k[i]] != null) {
+          key.add(Utf.instance.vietNameseCharsetByString[k[i]]!);
+        } else {
+          key.add(-1);
+        }
+      }
+    }
+
+    // Chỉnh chiều dài của key sao cho phù hợp với root
+    if (key.length < root.length) {
+      int count = root.length - key.length;
+      int i = 0;
+      while (i < count) {
+        key.add(key[i]);
+        i++;
+      }
+    }
 
     if (isInvalidList(root) && isInvalidList(key)) {
       isInvalid = true;
     }
 
     if (!isInvalid) {
-      return "không hợp lệ"; 
+      return "không hợp lệ";
     } else {
-      // so sánh đoạn mã 
-      var newkey = [...key]..sort((a,b) => a.compareTo(b));
-   
+      // so sánh đoạn mã
+      var newkey = [...key]..sort((a, b) => a.compareTo(b));
+
       var h = List.generate(key.length, (index) {
         int pos = newkey.indexOf(key[index]);
         newkey[pos] = -1;
         return pos;
       });
-    
-      var newRoot =
-          List.generate(root.length, (index) => root[h[index]] + 65);
-      result = String.fromCharCodes(newRoot);
-      return result;
+
+      List<int> newRoot = [];
+      for(int i = 0; i < h.length; i++) {
+        int j = h[i];
+        if(j <= root.length - 1){
+          newRoot.add(root[j] + (type == TypeCharset.normal ? 65 : 0));
+        }
+      }
+
+      if (type == TypeCharset.normal) {
+        return String.fromCharCodes(newRoot);
+      } else {
+        String result = "";
+        newRoot.forEach((e) {
+          result += Utf.instance.vietNameseCharsetByInt[e]!;
+        });
+        return result;
+      }
     }
   }
 
@@ -363,7 +716,7 @@ class Global {
   // kiểm tra xem danh sách có hợp lệ hay không
   bool isInvalidList(final List<int> root) {
     return root.every((e) {
-          if (e < 0 || e > 25)
+          if (e < 0 || e > Z - 1)
             return false;
           else {
             return true;
@@ -381,5 +734,4 @@ class Global {
     var number = k[0].length;
     return k.every((element) => element.length == number) == true ? number : -1;
   }
-
 }

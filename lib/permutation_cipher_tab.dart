@@ -10,6 +10,7 @@ class PermutationCipherTabState extends State<PermutationCipherTab> {
   TextEditingController keyController = TextEditingController();
   TextEditingController myStringController = TextEditingController();
   String result = "";
+  bool vi = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -43,6 +44,22 @@ class PermutationCipherTabState extends State<PermutationCipherTab> {
             )
           ],
         ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('mã tiếng việt'),
+              Switch(
+                  value: vi,
+                  onChanged: (value) {
+                    setState(() {
+                      this.vi = value;
+                    });
+                  }),
+            ],
+          ),
+        ),
         Text(result),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,7 +69,7 @@ class PermutationCipherTabState extends State<PermutationCipherTab> {
                 setState(() {
                   result = Global.instance.encodePermutation(
                       myStringController.text.trim(),
-                      keyController.text.trim());
+                      keyController.text.trim(),type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
               child: Text("mã hóa",style: TextStyle(fontSize: 15)),
@@ -62,7 +79,7 @@ class PermutationCipherTabState extends State<PermutationCipherTab> {
                 setState(() {
                   result = Global.instance.decodePermutation(
                       myStringController.text.trim(),
-                      keyController.text.trim());
+                      keyController.text.trim(),type: vi ? TypeCharset.viet : TypeCharset.normal);
                 });
               },
               child: Text("giải mã",style: TextStyle(fontSize: 15)),
