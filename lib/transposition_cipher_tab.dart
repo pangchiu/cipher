@@ -2,20 +2,19 @@ import 'package:cipher/global.dart';
 import 'package:cipher/table_result.dart';
 import 'package:flutter/material.dart';
 
-class AutoGenesisCipherTab extends StatefulWidget {
+class TranspositionCipherTab extends StatefulWidget {
   final bool tableMode;
-  AutoGenesisCipherTab({ this.tableMode = true});
+  TranspositionCipherTab({ this.tableMode = true});
   @override
-  AutoGenesisCipherTabState createState() => AutoGenesisCipherTabState();
+  TranspositionCipherTabState createState() => TranspositionCipherTabState();
 }
 
-class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
-  TextEditingController keyControler = TextEditingController();
+class TranspositionCipherTabState extends State<TranspositionCipherTab> {
+  TextEditingController keyController = TextEditingController();
   TextEditingController myStringController = TextEditingController();
   Map? result = {};
-  bool vi = false;
   bool isEncode = true;
-
+  bool vi = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,7 +48,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
                     child: TextField(
                       style: TextStyle(fontSize: 16),
                       cursorHeight: 30,
-                      controller: keyControler,
+                      controller: keyController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -109,7 +108,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
                     style:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 Switch(
-                  activeColor: Colors.deepOrange,
+                    activeColor: Colors.deepOrange,
                     value: vi,
                     onChanged: (value) {
                       setState(() {
@@ -121,65 +120,62 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
           ),
           buildView(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            MaterialButton(
-              onPressed: () {
-                setState(() {
-                  result = Global.instance.encodeAutogenesis(
-                      myStringController.text.trim(),
-                      int.parse(keyControler.text.trim()),
-                      type: vi ? TypeCharset.viet : TypeCharset.normal);
-                      isEncode = true;
-                });
-              },
-              child: Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          color: Colors.deepOrange,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text("Mã Hóa",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white))),
-            ),
-            MaterialButton(
-              onPressed: () {
-                setState(() {
-                  result = Global.instance.decodeAutogenesis(
-                      myStringController.text.trim(),
-                      int.parse(keyControler.text.trim()),
-                      type: vi ? TypeCharset.viet : TypeCharset.normal);
-                      isEncode = false;
-                      
-                });
-              },
-              child: Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          color: Colors.deepOrange,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text("Giải mã",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white))),
-            )
-          ],
-        )
-          )
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        result = Global.instance.encodeTransposition(
+                            myStringController.text.trim(),
+                            keyController.text.trim(),
+                            type: vi ? TypeCharset.viet : TypeCharset.normal);
+                            isEncode = true;
+                      });
+                    },
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            color: Colors.deepOrange,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Text("Mã Hóa",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white))),
+                  ),
+                  MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        result = Global.instance.decodeTransposition(
+                            myStringController.text.trim(),
+                            keyController.text.trim(),
+                            type: vi ? TypeCharset.viet : TypeCharset.normal);
+                            isEncode = false;
+                      });
+                    },
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            color: Colors.deepOrange,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Text("Giải mã",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white))),
+                  )
+                ],
+              ))
         ],
       ),
     );
   }
-
   Widget buildView() {
     if (result == null) {
       return Expanded(child: Text("không hợp lệ"));
