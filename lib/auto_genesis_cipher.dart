@@ -188,6 +188,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
         child: result!.isEmpty
             ? Text("mời nhập")
             : TableResult(
+              tableMode : widget.tableMode,
                 listX: result!["listX"],
                 listY: result!["listY"],
                 listK: result!["listK"],
@@ -197,6 +198,7 @@ class AutoGenesisCipherTabState extends State<AutoGenesisCipherTab> {
                 listInverseOfK: result!["listInverseOfK"],
                 isEncode: isEncode,
                 inverseOfK: result!["inverseOfK"],
+                result: result!["result"],
               ),
       );
     }

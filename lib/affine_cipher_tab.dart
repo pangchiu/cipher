@@ -238,6 +238,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
         child: result!.isEmpty
             ? Text("mời nhập")
             : TableResult(
+              tableMode : widget.tableMode,
                 listX: result!["listX"],
                 listY: result!["listY"],
                 listK: result!["listK"],
@@ -247,6 +248,7 @@ class AffineCipherTabState extends State<AffineCipherTab> {
                 listInverseOfK: result!["listInverseOfK"],
                 isEncode: isEncode,
                 inverseOfK: result!["inverseOfK"],
+                result: result!["result"],
               ),
       );
     }

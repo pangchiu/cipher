@@ -333,6 +333,7 @@ class HillCipherTabState extends State<HillCipherTab> {
         child: result!.isEmpty
             ? Text("mời nhập")
             : TableResult(
+              tableMode : widget.tableMode,
                 listX: result!["listX"],
                 listY: result!["listY"],
                 listK: result!["listK"],
@@ -342,6 +343,7 @@ class HillCipherTabState extends State<HillCipherTab> {
                 listInverseOfK: result!["listInverseOfK"],
                 isEncode: isEncode,
                 inverseOfK: result!["inverseOfK"],
+                result: result!["result"],
               ),
       );
     }

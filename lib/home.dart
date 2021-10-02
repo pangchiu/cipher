@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool tableMode = false;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -47,13 +48,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           body: TabBarView(children: [
-            ShiftCipherTab(),
-            VingenCipherTab(),
-            AffineCipherTab(),
-            HillCipherTab(),
-            AutoGenesisCipherTab(),
-            TranspositionCipherTab(),
-            RSACipherTab()
+            ShiftCipherTab(tableMode : tableMode),
+            VingenCipherTab(tableMode : tableMode),
+            AffineCipherTab(tableMode : tableMode),
+            HillCipherTab(tableMode : tableMode),
+            AutoGenesisCipherTab(tableMode : tableMode),
+            TranspositionCipherTab(tableMode : tableMode),
+            RSACipherTab(tableMode : tableMode)
           ])),
     );
   }

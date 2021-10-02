@@ -10,6 +10,7 @@ class TableResult2 extends StatelessWidget {
   final List<int> ds;
   final List<int> as;
   final List<int> xs;
+  final bool tableMode;
 
   TableResult2({
     this.isEncode = true,
@@ -21,6 +22,7 @@ class TableResult2 extends StatelessWidget {
     required this.xs,
     required this.n,
     required this.inverseOfE,
+    required this.tableMode,
   });
 
   @override
@@ -48,8 +50,8 @@ class TableResult2 extends StatelessWidget {
             ),
           ],
         ),
-        buildTable(),
-        SizedBox(height : 30),
+        Visibility(visible: tableMode, child: buildTable()),
+        SizedBox(height: 30),
         isEncode
             ? Text(
                 "y = ${ds.last}",

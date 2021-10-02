@@ -13,6 +13,7 @@ class TableResult extends StatelessWidget {
   final List<List<int>>? inverseOfK;
   final List<List<int>>? kStart;
   final String? result;
+  final bool tableMode;
 
   TableResult(
       {this.listX,
@@ -26,14 +27,27 @@ class TableResult extends StatelessWidget {
       this.inverseOfK,
       this.kStart,
       this.result,
-      this.listInverseOfK});
+      this.listInverseOfK,
+      this.tableMode = true});
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      children: buildView(),
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+    return Column(
+      children: [
+        Visibility(
+          visible: tableMode,
+          child: Table(
+            border: TableBorder.all(),
+            children: buildView(),
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Text("$result",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+      ],
     );
   }
 

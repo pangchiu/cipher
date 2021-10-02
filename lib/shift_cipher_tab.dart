@@ -3,6 +3,8 @@ import 'package:cipher/table_result.dart';
 import 'package:flutter/material.dart';
 
 class ShiftCipherTab extends StatefulWidget {
+  final tableMode;
+  ShiftCipherTab({this.tableMode});
   @override
   ShiftCipherTabState createState() => ShiftCipherTabState();
 }
@@ -191,6 +193,7 @@ class ShiftCipherTabState extends State<ShiftCipherTab> {
         child: result!.isEmpty
             ? Text("mời nhập")
             : TableResult(
+                tableMode : widget.tableMode,
                 listX: result!["listX"],
                 listY: result!["listY"],
                 listK: result!["listK"],
@@ -200,6 +203,7 @@ class ShiftCipherTabState extends State<ShiftCipherTab> {
                 listInverseOfK: result!["listInverseOfK"],
                 isEncode: isEncode,
                 inverseOfK: result!["inverseOfK"],
+                result: result!["result"],
               ),
       );
     }

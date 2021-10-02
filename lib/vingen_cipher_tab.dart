@@ -3,6 +3,8 @@ import 'package:cipher/table_result.dart';
 import 'package:flutter/material.dart';
 
 class VingenCipherTab extends StatefulWidget {
+  final bool tableMode;
+  VingenCipherTab({ this.tableMode = true});
   @override
   VingenCipherTabState createState() => VingenCipherTabState();
 }
@@ -184,6 +186,7 @@ class VingenCipherTabState extends State<VingenCipherTab> {
         child: result!.isEmpty
             ? Text("mời nhập")
             : TableResult(
+              tableMode : widget.tableMode,
                 listX: result!["listX"],
                 listY: result!["listY"],
                 listK: result!["listK"],
@@ -193,6 +196,7 @@ class VingenCipherTabState extends State<VingenCipherTab> {
                 listInverseOfK: result!["listInverseOfK"],
                 isEncode: isEncode,
                 inverseOfK: result!["inverseOfK"],
+                result: result!["result"],
               ),
       );
     }
