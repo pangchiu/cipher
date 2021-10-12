@@ -1,8 +1,8 @@
 import 'package:cipher/affine_cipher_tab.dart';
 import 'package:cipher/auto_genesis_cipher.dart';
 import 'package:cipher/hill_cipher_tab.dart';
+import 'package:cipher/mhk_cipher.dart';
 import 'package:cipher/rsa_cipher.dart';
-
 import 'package:cipher/shift_cipher_tab.dart';
 import 'package:cipher/transposition_cipher_tab.dart';
 import 'package:cipher/vingen_cipher_tab.dart';
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
                     icon:
                         Text("Transposition", style: TextStyle(fontSize: 20))),
                 Tab(icon: Text("RSA", style: TextStyle(fontSize: 20))),
+                Tab(icon: Text("MHK", style: TextStyle(fontSize: 20))),
               ],
             ),
           ),
@@ -54,7 +55,8 @@ class _HomePageState extends State<HomePage> {
             HillCipherTab(tableMode : tableMode),
             AutoGenesisCipherTab(tableMode : tableMode),
             TranspositionCipherTab(tableMode : tableMode),
-            RSACipherTab(tableMode : tableMode)
+            RSACipherTab(tableMode : tableMode),
+            MhkCipher()
           ])),
     );
   }
