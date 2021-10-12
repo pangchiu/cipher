@@ -17,7 +17,7 @@ class Global2 {
     if (isInvalid) {
       int n = p * q;
       int phi = (p - 1) * (q - 1);
-      int inverseOfE = Global.instance.inverseOf(e, n);
+      int inverseOfE = Global.instance.inverseOf(e, phi);
       int d = inverseOfE % phi;
       var map = sAM(x, e, n);
       map["phi"] = phi;
@@ -42,7 +42,7 @@ class Global2 {
     if (isInvalid) {
       int n = p * q;
       int phi = (p - 1) * (q - 1);
-      int inverseOfE = Global.instance.inverseOf(e, n);
+      int inverseOfE = Global.instance.inverseOf(e, phi);
       int d = inverseOfE % phi;
       var map = sAM(y, d, n);
       map["phi"] = phi;

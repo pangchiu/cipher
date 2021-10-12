@@ -265,6 +265,7 @@ class RSACipherTabState extends State<RSACipherTab> {
           child: result!.isEmpty
               ? Text("mời nhập")
               : TableResult2(
+                // isEncode: isEncode,
                 tableMode : widget.tableMode,
                   phi: result!["phi"],
                   keyPublic: result!["keyPublic"],

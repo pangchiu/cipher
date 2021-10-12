@@ -36,10 +36,10 @@ class TableResult2 extends StatelessWidget {
               "n = $n",
               style: TextStyle(fontSize: 16, color: Colors.deepPurple),
             ),
-            Text(
-              "Inverse of e = $inverseOfE",
-              style: TextStyle(fontSize: 16, color: Colors.deepPurple),
-            ),
+            // Text(
+            //   "Inverse of e = $inverseOfE",
+            //   style: TextStyle(fontSize: 16, color: Colors.deepPurple),
+            // ),
             Text(
               "Phi n = $phi",
               style: TextStyle(fontSize: 16, color: Colors.deepPurple),

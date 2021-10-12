@@ -295,7 +295,7 @@ class _MhkCipherState extends State<MhkCipher> {
       // }
       return Expanded(
           child: isEncode
-              ? Text(result!["y"] ?? "",
+              ? Text(result!["y"] != null ? result!["y"].toString() : "",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
               : Text(result!["listX"] != null ? result!["listX"].toString() : "",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)));
